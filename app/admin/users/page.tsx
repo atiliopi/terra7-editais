@@ -480,8 +480,8 @@ export default function AdminUsersPage() {
                     </select>
                   </td>
 
-                  <td className="px-4 py-4">
-                    <div className="flex flex-wrap justify-end gap-2">
+                  <td className="px-4 py-4 align-middle">
+                     <div className="grid min-w-[300px] grid-cols-2 gap-2">
                       <button
                         onClick={() => updateUser(user.id, user)}
                         disabled={savingId === user.id}
@@ -517,7 +517,7 @@ export default function AdminUsersPage() {
 
                       <button
                         onClick={() => deleteUser(user.id)}
-                        className="rounded-lg bg-zinc-700 px-3 py-2 text-xs font-semibold text-white hover:bg-zinc-600"
+                        className="col-span-2 rounded-lg bg-zinc-700 px-3 py-2 text-xs font-semibold text-white hover:bg-zinc-600"
                       >
                         Excluir
                       </button>
