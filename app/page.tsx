@@ -381,7 +381,7 @@ export default function Home() {
                   <td className="px-4 py-4">
                     <Link
                       href={`/editais/${grant.id}`}
-                      className="rounded-lg border border-zinc-700 px-3 py-2 text-xs text-zinc-200 hover:bg-zinc-800"
+                      className="inline-flex min-w-[120px] justify-center whitespace-nowrap rounded-lg border border-zinc-700 px-4 py-2 text-sm text-zinc-200 hover:bg-zinc-800"
                     >
                       Ver detalhes
                     </Link>

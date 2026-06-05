@@ -25,7 +25,7 @@ const styles: Record<GrantStatus, string> = {
 export function GrantStatusBadge({ status }: Props) {
   return (
     <span
-      className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${styles[status]}`}
+      className={`inline-flex min-w-[100px] justify-center whitespace-nowrap rounded-full border px-3 py-1 text-xs font-semibold ${styles[status]}`}
     >
       {labels[status]}
     </span>
