@@ -322,8 +322,8 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="hidden overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950 md:block">
-          <table className="w-full border-collapse text-left text-sm">
+        <section className="hidden overflow-x-auto rounded-2xl border border-zinc-800 bg-zinc-950 md:block">
+          <table className="min-w-[1180px] w-full border-collapse text-left text-sm">
             <thead className="bg-zinc-900 text-xs uppercase tracking-wide text-zinc-500">
               <tr>
                 <th className="px-4 py-4">ID</th>
@@ -366,8 +366,8 @@ export default function Home() {
                     {formatDateBR(grant.closing_date)}
                   </td>
 
-                  <td className="px-4 py-4">
-                    <GrantStatusBadge status={grant.status} />
+                  <td className="whitespace-nowrap px-4 py-4">
+                   <GrantStatusBadge status={grant.status} />
                   </td>
 
                   <td className="px-4 py-4 text-zinc-300">
@@ -378,7 +378,7 @@ export default function Home() {
                     {grant.sender_name || "Não informado"}
                   </td>
 
-                  <td className="px-4 py-4">
+                  <td className="whitespace-nowrap px-4 py-4">
                     <Link
                       href={`/editais/${grant.id}`}
                       className="inline-flex min-w-[120px] justify-center whitespace-nowrap rounded-lg border border-zinc-700 px-4 py-2 text-sm text-zinc-200 hover:bg-zinc-800"
