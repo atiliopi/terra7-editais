@@ -268,13 +268,24 @@ Regras obrigatórias:
     });
 
     if (aiResponse.ok) {
-      const aiData = await aiResponse.json();
-      const content = aiData?.choices?.[0]?.message?.content;
+  const aiData = await aiResponse.json();
 
-      if (content) {
-        parsed = normalizeParsedGrant(JSON.parse(content), message);
-      }
-    }
+  console.log("OPENAI STATUS:", aiResponse.status);
+  console.log("OPENAI RESPONSE:", JSON.stringify(aiData, null, 2));
+
+  const content = aiData?.choices?.[0]?.message?.content;
+
+  console.log("OPENAI CONTENT:", content);
+
+  if (content) {
+    parsed = normalizeParsedGrant(JSON.parse(content), message);
+
+    console.log(
+      "PARSED FINAL:",
+      JSON.stringify(parsed, null, 2)
+    );
+  }
+}
   } catch {
     // Se a IA falhar, mantém o cadastro preliminar com a mensagem original.
   }
