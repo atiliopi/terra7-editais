@@ -486,7 +486,7 @@ export default function AdminUsersPage() {
         )}
 
         <section className="hidden overflow-x-auto rounded-2xl border border-zinc-800 bg-zinc-950 xl:block">
-          <table className="w-full min-w-[1500px] text-left text-sm">
+          <table className="w-full min-w-[1180px] text-left text-sm">
             <thead className="bg-zinc-900 text-xs uppercase tracking-wide text-zinc-500">
               <tr>
                 <th className="px-5 py-4">Nome</th>
