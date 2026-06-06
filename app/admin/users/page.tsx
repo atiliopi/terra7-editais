@@ -579,11 +579,11 @@ export default function AdminUsersPage() {
                   </td>
 
                   <td className="px-5 py-5">
-                    <div className="flex min-w-[560px] items-center gap-3">
+                    <div className="flex items-center gap-2">
                       <button
                         onClick={() => updateUser(user.id, user)}
                         disabled={savingId === user.id}
-                        className="inline-flex min-w-[90px] items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-700"
+                        className="inline-flex min-w-[90px] items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-700"
                       >
                         💾 {savingId === user.id ? "Salvando..." : "Salvar"}
                       </button>
@@ -592,14 +592,14 @@ export default function AdminUsersPage() {
                         onClick={() =>
                           updateUser(user.id, { ...user, status: "approved" })
                         }
-                        className="inline-flex min-w-[95px] items-center justify-center rounded-lg bg-green-600 px-4 py-2 text-xs font-semibold text-white hover:bg-green-700"
+                        className="inline-flex min-w-[95px] items-center justify-center rounded-lg bg-green-600 px-3 py-2 text-xs font-semibold text-white hover:bg-green-700"
                       >
                         ✓ Aprovar
                       </button>
 
                       <button
                         onClick={() => resetPassword(user.id)}
-                        className="inline-flex min-w-[140px] items-center justify-center rounded-lg bg-purple-600 px-4 py-2 text-xs font-semibold text-white hover:bg-purple-700"
+                        className="inline-flex min-w-[120px] items-center justify-center rounded-lg bg-purple-600 px-3 py-2 text-xs font-semibold text-white hover:bg-purple-700"
                       >
                         🔑 Redefinir senha
                       </button>
@@ -608,14 +608,14 @@ export default function AdminUsersPage() {
                         onClick={() =>
                           updateUser(user.id, { ...user, status: "blocked" })
                         }
-                        className="inline-flex min-w-[105px] items-center justify-center rounded-lg bg-red-600 px-4 py-2 text-xs font-semibold text-white hover:bg-red-700"
+                        className="inline-flex min-w-[105px] items-center justify-center rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white hover:bg-red-700"
                       >
                         🔒 Bloquear
                       </button>
 
                       <button
                         onClick={() => deleteUser(user.id)}
-                        className="inline-flex min-w-[90px] items-center justify-center rounded-lg bg-zinc-700 px-4 py-2 text-xs font-semibold text-white hover:bg-zinc-600"
+                        className="inline-flex min-w-[90px] items-center justify-center rounded-lg bg-zinc-700 px-3 py-2 text-xs font-semibold text-white hover:bg-zinc-600"
                       >
                         🗑 Excluir
                       </button>
