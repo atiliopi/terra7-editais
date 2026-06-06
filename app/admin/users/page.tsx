@@ -28,6 +28,9 @@ const inputClass =
 const buttonClass =
   "inline-flex items-center justify-center rounded-xl px-4 py-3 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60";
 
+const actionButtonClass =
+  "inline-flex h-9 items-center justify-center rounded-lg px-3 text-[11px] font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-60";
+
 export default function AdminUsersPage() {
   const router = useRouter();
 
@@ -94,11 +97,11 @@ export default function AdminUsersPage() {
         user.phone || ""
       }`.toLowerCase();
 
-      const matchesSearch = text.includes(search.toLowerCase());
-      const matchesStatus = !statusFilter || user.status === statusFilter;
-      const matchesRole = !roleFilter || user.role === roleFilter;
-
-      return matchesSearch && matchesStatus && matchesRole;
+      return (
+        text.includes(search.toLowerCase()) &&
+        (!statusFilter || user.status === statusFilter) &&
+        (!roleFilter || user.role === roleFilter)
+      );
     });
   }, [users, search, statusFilter, roleFilter]);
 
@@ -111,18 +114,6 @@ export default function AdminUsersPage() {
       .map((part) => part[0])
       .join("")
       .toUpperCase();
-  }
-
-  function getStatusLabel(status: string | null) {
-    if (status === "approved") return "Aprovado";
-    if (status === "pending") return "Pendente";
-    if (status === "blocked") return "Bloqueado";
-    return "Pendente";
-  }
-
-  function getRoleLabel(role: string | null) {
-    if (role === "admin") return "Admin";
-    return "Usuário";
   }
 
   async function updateUser(id: string, values: Partial<Profile>) {
@@ -297,7 +288,7 @@ export default function AdminUsersPage() {
 
   return (
     <main className="min-h-screen bg-black text-white">
-      <div className="mx-auto max-w-[1800px] px-4 py-5 sm:px-6 sm:py-8">
+      <div className="mx-auto max-w-[1500px] px-4 py-5 sm:px-6 sm:py-8">
         <header className="mb-6 rounded-3xl border border-zinc-800 bg-gradient-to-b from-zinc-950 to-black p-5 shadow-2xl shadow-black/40">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
             <div className="flex items-center gap-4">
@@ -337,7 +328,7 @@ export default function AdminUsersPage() {
             </div>
           </div>
 
-          <div className="mt-6 grid gap-3 lg:grid-cols-[1fr_280px_280px_160px]">
+          <div className="mt-6 grid gap-3 lg:grid-cols-[1fr_240px_220px_150px]">
             <input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
@@ -374,7 +365,7 @@ export default function AdminUsersPage() {
               }}
               className={`${buttonClass} border border-zinc-700 text-zinc-300 hover:bg-zinc-900`}
             >
-              ↻ Limpar filtros
+              ↻ Limpar
             </button>
           </div>
         </header>
@@ -485,16 +476,25 @@ export default function AdminUsersPage() {
           </form>
         )}
 
-        <section className="hidden overflow-x-auto rounded-2xl border border-zinc-800 bg-zinc-950 xl:block">
-          <table className="w-full min-w-[980px] text-left text-sm">
+        <section className="hidden rounded-2xl border border-zinc-800 bg-zinc-950 xl:block">
+          <table className="w-full table-fixed text-left text-sm">
+            <colgroup>
+              <col className="w-[21%]" />
+              <col className="w-[22%]" />
+              <col className="w-[15%]" />
+              <col className="w-[11%]" />
+              <col className="w-[10%]" />
+              <col className="w-[21%]" />
+            </colgroup>
+
             <thead className="bg-zinc-900 text-xs uppercase tracking-wide text-zinc-500">
               <tr>
-                <th className="px-5 py-4">Nome</th>
-                <th className="px-5 py-4">Email</th>
-                <th className="px-5 py-4">Telefone</th>
-                <th className="px-5 py-4">Status</th>
-                <th className="px-5 py-4">Perfil</th>
-                <th className="px-5 py-4">Ações</th>
+                <th className="px-4 py-4">Nome</th>
+                <th className="px-4 py-4">Email</th>
+                <th className="px-4 py-4">Telefone</th>
+                <th className="px-4 py-4">Status</th>
+                <th className="px-4 py-4">Perfil</th>
+                <th className="px-4 py-4">Ações</th>
               </tr>
             </thead>
 
@@ -504,54 +504,52 @@ export default function AdminUsersPage() {
                   key={user.id}
                   className="border-t border-zinc-800 hover:bg-zinc-900/40"
                 >
-                  <td className="px-5 py-5">
+                  <td className="px-4 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-purple-700 text-sm font-bold">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-purple-700 text-xs font-bold">
                         {getInitials(user.full_name, user.email)}
                       </div>
 
-                      <div>
-                        <input
-                          value={user.full_name || ""}
-                          onChange={(event) =>
-                            handleChange(user.id, "full_name", event.target.value)
-                          }
-                          className="w-[150px] border-none bg-transparent text-sm font-semibold text-white outline-none"
-                        />
-                      </div>
+                      <input
+                        value={user.full_name || ""}
+                        onChange={(event) =>
+                          handleChange(user.id, "full_name", event.target.value)
+                        }
+                        className="min-w-0 flex-1 border-none bg-transparent text-sm font-semibold text-white outline-none"
+                      />
                     </div>
                   </td>
 
-                  <td className="px-5 py-5">
+                  <td className="px-4 py-4">
                     <input
                       value={user.email || ""}
                       onChange={(event) =>
                         handleChange(user.id, "email", event.target.value)
                       }
-                      className="w-[230px] border-none bg-transparent text-sm text-white outline-none"
+                      className="w-full border-none bg-transparent text-sm text-white outline-none"
                     />
                   </td>
 
-                  <td className="px-5 py-5">
+                  <td className="px-4 py-4">
                     <div className="flex items-center gap-2">
-                      <span className="text-lg text-green-400">☘</span>
+                      <span className="shrink-0 text-green-400">☘</span>
                       <input
                         value={user.phone || ""}
                         onChange={(event) =>
                           handleChange(user.id, "phone", event.target.value)
                         }
-                        className="w-[150px] border-none bg-transparent text-sm text-white outline-none"
+                        className="min-w-0 flex-1 border-none bg-transparent text-sm text-white outline-none"
                       />
                     </div>
                   </td>
 
-                  <td className="px-5 py-5">
+                  <td className="px-4 py-4">
                     <select
                       value={user.status || "pending"}
                       onChange={(event) =>
                         handleChange(user.id, "status", event.target.value)
                       }
-                      className={`min-w-[130px] rounded-lg border px-3 py-2 text-sm font-semibold outline-none ${
+                      className={`w-full rounded-lg border px-2 py-2 text-xs font-semibold outline-none ${
                         user.status === "approved"
                           ? "border-green-500/30 bg-green-500/10 text-green-300"
                           : user.status === "blocked"
@@ -565,57 +563,57 @@ export default function AdminUsersPage() {
                     </select>
                   </td>
 
-                  <td className="px-5 py-5">
+                  <td className="px-4 py-4">
                     <select
                       value={user.role || "viewer"}
                       onChange={(event) =>
                         handleChange(user.id, "role", event.target.value)
                       }
-                      className="min-w-[130px] rounded-lg border border-blue-500/30 bg-blue-500/10 px-3 py-2 text-sm font-semibold text-blue-200 outline-none"
+                      className="w-full rounded-lg border border-blue-500/30 bg-blue-500/10 px-2 py-2 text-xs font-semibold text-blue-200 outline-none"
                     >
                       <option value="viewer">Usuário</option>
                       <option value="admin">Admin</option>
                     </select>
                   </td>
 
-                  <td className="px-5 py-5">
-                    <div className="flex items-center gap-2">
+                  <td className="px-4 py-4">
+                    <div className="grid grid-cols-2 gap-2">
                       <button
                         onClick={() => updateUser(user.id, user)}
                         disabled={savingId === user.id}
-                        className="inline-flex min-w-[90px] items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-700"
+                        className={`${actionButtonClass} bg-blue-600 hover:bg-blue-700`}
                       >
-                        💾 {savingId === user.id ? "Salvando..." : "Salvar"}
+                        💾 {savingId === user.id ? "..." : "Salvar"}
                       </button>
 
                       <button
                         onClick={() =>
                           updateUser(user.id, { ...user, status: "approved" })
                         }
-                        className="inline-flex min-w-[95px] items-center justify-center rounded-lg bg-green-600 px-3 py-2 text-xs font-semibold text-white hover:bg-green-700"
+                        className={`${actionButtonClass} bg-green-600 hover:bg-green-700`}
                       >
                         ✓ Aprovar
                       </button>
 
                       <button
                         onClick={() => resetPassword(user.id)}
-                        className="inline-flex min-w-[120px] items-center justify-center rounded-lg bg-purple-600 px-3 py-2 text-xs font-semibold text-white hover:bg-purple-700"
+                        className={`${actionButtonClass} bg-purple-600 hover:bg-purple-700`}
                       >
-                        🔑 Redefinir senha
+                        🔑 Senha
                       </button>
 
                       <button
                         onClick={() =>
                           updateUser(user.id, { ...user, status: "blocked" })
                         }
-                        className="inline-flex min-w-[105px] items-center justify-center rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white hover:bg-red-700"
+                        className={`${actionButtonClass} bg-red-600 hover:bg-red-700`}
                       >
                         🔒 Bloquear
                       </button>
 
                       <button
                         onClick={() => deleteUser(user.id)}
-                        className="inline-flex min-w-[90px] items-center justify-center rounded-lg bg-zinc-700 px-3 py-2 text-xs font-semibold text-white hover:bg-zinc-600"
+                        className={`${actionButtonClass} col-span-2 bg-zinc-700 hover:bg-zinc-600`}
                       >
                         🗑 Excluir
                       </button>
