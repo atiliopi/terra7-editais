@@ -469,6 +469,40 @@ export async function POST(request: Request) {
       allowedUser.email ||
       "WhatsApp";
 
+      const normalizedTitle = parsed.title?.trim();
+
+if (normalizedTitle) {
+  let duplicateQuery = supabase
+    .from("grants")
+    .select("id, code, title, state_scope, closing_date")
+    .ilike("title", normalizedTitle);
+
+  if (parsed.state_scope) {
+    duplicateQuery = duplicateQuery.eq("state_scope", parsed.state_scope);
+  }
+
+  if (parsed.closing_date) {
+    duplicateQuery = duplicateQuery.eq("closing_date", parsed.closing_date);
+  }
+
+  const { data: duplicateGrant, error: duplicateError } = await duplicateQuery
+    .limit(1)
+    .maybeSingle();
+
+  if (duplicateError) {
+    console.error("ERRO_VERIFICAR_DUPLICIDADE:", duplicateError);
+  }
+
+  if (duplicateGrant) {
+    return NextResponse.json({
+      ignored: true,
+      reason: "Edital duplicado",
+      duplicate: duplicateGrant,
+      reply: `Sou o Terra7. Este edital parece já estar cadastrado como ${duplicateGrant.code || duplicateGrant.id}.`,
+    });
+  }
+}
+
     const { error } = await supabase.from("grants").insert([
       {
         code,
