@@ -134,6 +134,9 @@ export default function Home() {
 
   const total = filteredGrants.length;
   const opened = filteredGrants.filter((g) => g.status === "open").length;
+  const attention = filteredGrants.filter(
+  (g) => g.status === "attention"
+).length;
   const urgent = filteredGrants.filter((g) => g.status === "urgent").length;
   const closed = filteredGrants.filter((g) => g.status === "closed").length;
   const noDeadline = filteredGrants.filter((g) => g.status === "no_deadline").length;
@@ -201,13 +204,14 @@ export default function Home() {
           </div>
         </header>
 
-        <section className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-          <SummaryCard title="Total" value={total} />
-          <SummaryCard title="Abertos" value={opened} color="green" />
-          <SummaryCard title="Urgentes" value={urgent} color="red" />
-          <SummaryCard title="Encerrados" value={closed} color="gray" />
-          <SummaryCard title="Sem prazo" value={noDeadline} color="neutral" />
-        </section>
+        <section className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
+  <SummaryCard title="Total" value={total} />
+  <SummaryCard title="Abertos" value={opened} color="green" />
+  <SummaryCard title="Atenção" value={attention} color="yellow" />
+  <SummaryCard title="Urgentes" value={urgent} color="red" />
+  <SummaryCard title="Encerrados" value={closed} color="gray" />
+  <SummaryCard title="Sem prazo" value={noDeadline} color="neutral" />
+</section>
 
         <section className="mb-6 rounded-2xl border border-zinc-800 bg-zinc-950 p-4">
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
@@ -495,13 +499,14 @@ function SummaryCard({
   value: number;
   color?: "white" | "green" | "red" | "gray" | "neutral";
 }) {
-  const colors = {
-    white: "text-white",
-    green: "text-green-400",
-    red: "text-red-400",
-    gray: "text-zinc-400",
-    neutral: "text-zinc-300",
-  };
+const colors = {
+  white: "text-white",
+  green: "text-green-400",
+  yellow: "text-yellow-400",
+  red: "text-red-400",
+  gray: "text-zinc-400",
+  neutral: "text-zinc-300",
+};
 
   return (
     <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-4 sm:p-5">
