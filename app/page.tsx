@@ -510,7 +510,7 @@ function SummaryCard({
 }: {
   title: string;
   value: number;
-  color?: "white" | "green" | "red" | "gray" | "neutral";
+  color?: "white" | "green" | "yellow" |"red" | "gray" | "neutral";
 }) {
 const colors = {
   white: "text-white",
