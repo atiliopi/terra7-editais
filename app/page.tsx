@@ -267,6 +267,7 @@ export default function Home() {
             >
               <option value="">Todos os status</option>
               <option value="open">Aberto</option>
+              <option value="attention">Atenção</option>
               <option value="urgent">Urgente</option>
               <option value="closed">Encerrado</option>
               <option value="no_deadline">Sem prazo</option>
@@ -288,25 +289,37 @@ export default function Home() {
               ))}
             </select>
 
-            <input
-              type="date"
-              value={openingFrom}
-              onChange={(event) => {
-                setOpeningFrom(event.target.value);
-                resetPage();
-              }}
-              className="rounded-xl border border-zinc-800 bg-black px-4 py-3 text-sm text-white outline-none focus:border-zinc-500"
-            />
+            <label className="flex flex-col gap-2">
+  <span className="text-xs font-medium text-zinc-500">
+    Data inicial
+  </span>
 
-            <input
-              type="date"
-              value={openingTo}
-              onChange={(event) => {
-                setOpeningTo(event.target.value);
-                resetPage();
-              }}
-              className="rounded-xl border border-zinc-800 bg-black px-4 py-3 text-sm text-white outline-none focus:border-zinc-500"
-            />
+  <input
+    type="date"
+    value={openingFrom}
+    onChange={(event) => {
+      setOpeningFrom(event.target.value);
+      resetPage();
+    }}
+    className="rounded-xl border border-zinc-800 bg-black px-4 py-3 text-sm text-white outline-none focus:border-zinc-500"
+  />
+</label>
+
+<label className="flex flex-col gap-2">
+  <span className="text-xs font-medium text-zinc-500">
+    Data final
+  </span>
+
+  <input
+    type="date"
+    value={openingTo}
+    onChange={(event) => {
+      setOpeningTo(event.target.value);
+      resetPage();
+    }}
+    className="rounded-xl border border-zinc-800 bg-black px-4 py-3 text-sm text-white outline-none focus:border-zinc-500"
+  />
+</label>
 
             <button
               onClick={() => {
