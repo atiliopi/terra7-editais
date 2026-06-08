@@ -28,6 +28,14 @@ function toDateOnly(value?: string | null) {
   return value.slice(0, 10);
 }
 
+function toPncpDate(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}${month}${day}`;
+}
+
 function isClosed(closingDate: string | null) {
   if (!closingDate) return false;
 
@@ -38,12 +46,13 @@ function isClosed(closingDate: string | null) {
   return today > closing;
 }
 
-function getCurrentYearRange() {
-  const year = new Date().getFullYear();
+function getDateRange() {
+  const today = new Date();
+  const end = new Date(today.getFullYear(), 11, 31);
 
   return {
-    start: `${year}0101`,
-    end: `${year}1231`,
+    start: toPncpDate(today),
+    end: toPncpDate(end),
   };
 }
 
@@ -57,8 +66,8 @@ function getOfficialUrl(item: PncpItem) {
 }
 
 function buildNotes(item: PncpItem) {
-  const notes = [
-    `Fonte oficial: PNCP`,
+  return [
+    "Fonte oficial: PNCP",
     item.numeroControlePNCP
       ? `Número de controle PNCP: ${item.numeroControlePNCP}`
       : null,
@@ -69,9 +78,13 @@ function buildNotes(item: PncpItem) {
     item.orgaoEntidade?.razaoSocial
       ? `Órgão: ${item.orgaoEntidade.razaoSocial}`
       : null,
-  ].filter(Boolean);
-
-  return notes.join("\n");
+    item.unidadeOrgao?.municipioNome
+      ? `Município: ${item.unidadeOrgao.municipioNome}`
+      : null,
+    item.unidadeOrgao?.ufSigla ? `UF: ${item.unidadeOrgao.ufSigla}` : null,
+  ]
+    .filter(Boolean)
+    .join("\n");
 }
 
 export async function POST() {
@@ -81,156 +94,168 @@ export async function POST() {
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
 
-    const { start, end } = getCurrentYearRange();
+    const { start, end } = getDateRange();
 
-    const response = await fetch(
-      `https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=${start}&dataFinal=${end}&codigoModalidadeContratacao=10&pagina=1&tamanhoPagina=10`,
-      {
-        headers: {
-          Accept: "application/json",
-        },
-        cache: "no-store",
-      }
-    );
-
-    if (!response.ok) {
-      const text = await response.text();
-
-      return NextResponse.json(
-        {
-          error: "Não foi possível consultar a API do PNCP.",
-          status: response.status,
-          details: text.slice(0, 1000),
-        },
-        { status: 500 }
-      );
-    }
-
-    const result = await response.json();
-    const items: PncpItem[] = result?.data || [];
+    const modalidade = 10;
+    const tamanhoPagina = 10;
+    const maxPages = 5;
+    const maxImports = 5;
 
     let imported = 0;
     let duplicates = 0;
     let ignoredClosed = 0;
     let errors = 0;
+    let processed = 0;
 
     const details = [];
 
-    for (const item of items) {
-      if (imported >= 5) break;
+    for (let page = 1; page <= maxPages; page++) {
+      if (imported >= maxImports) break;
 
-      try {
-        const title = item.objetoCompra?.trim();
+      const url = `https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=${start}&dataFinal=${end}&codigoModalidadeContratacao=${modalidade}&pagina=${page}&tamanhoPagina=${tamanhoPagina}`;
 
-        if (!title) {
-          errors++;
-          details.push({
-            title: "Sem título",
-            status: "error",
-            error: "Objeto da compra não informado.",
-          });
-          continue;
-        }
+      const response = await fetch(url, {
+        headers: {
+          Accept: "application/json",
+        },
+        cache: "no-store",
+      });
 
-        const openingDate = toDateOnly(item.dataAberturaProposta);
-        const closingDate = toDateOnly(item.dataEncerramentoProposta);
+      if (!response.ok) {
+        const text = await response.text();
 
-        if (isClosed(closingDate)) {
-          ignoredClosed++;
-          details.push({
-            title,
-            status: "closed_ignored",
-          });
-          continue;
-        }
-
-        const sourceUrl = getOfficialUrl(item);
-
-        const { data: duplicateByUrl } = await supabase
-          .from("grants")
-          .select("id, code")
-          .eq("source_url", sourceUrl)
-          .maybeSingle();
-
-        if (duplicateByUrl) {
-          duplicates++;
-          details.push({
-            title,
-            status: "duplicate",
-            code: duplicateByUrl.code,
-          });
-          continue;
-        }
-
-        const { data: duplicateByTitle } = await supabase
-          .from("grants")
-          .select("id, code")
-          .ilike("title", title)
-          .limit(1)
-          .maybeSingle();
-
-        if (duplicateByTitle) {
-          duplicates++;
-          details.push({
-            title,
-            status: "duplicate",
-            code: duplicateByTitle.code,
-          });
-          continue;
-        }
-
-        const { count } = await supabase
-          .from("grants")
-          .select("*", { count: "exact", head: true });
-
-        const code = `EDITAL-${String((count || 0) + 1).padStart(4, "0")}`;
-
-        const rawText = JSON.stringify(item, null, 2);
-
-        const { error: insertError } = await supabase.from("grants").insert([
+        return NextResponse.json(
           {
-            code,
-            title,
-            state_scope: item.unidadeOrgao?.ufNome || null,
-            area: "Contratações públicas",
-            opening_date: openingDate,
-            closing_date: closingDate,
-            total_value: item.valorTotalEstimado || item.valorTotalHomologado || null,
-            value_per_project: null,
-            source: "PNCP",
-            source_url: sourceUrl,
-            sender_name: "Terra7 IA",
-            notes: buildNotes(item),
-            raw_text: rawText,
+            error: "Não foi possível consultar a API do PNCP.",
+            status: response.status,
+            details: text.slice(0, 1000),
           },
-        ]);
+          { status: 500 }
+        );
+      }
 
-        if (insertError) {
-          errors++;
+      const result = await response.json();
+      const items: PncpItem[] = result?.data || [];
+
+      if (!items.length) break;
+
+      for (const item of items) {
+        if (imported >= maxImports) break;
+
+        processed++;
+
+        try {
+          const title = item.objetoCompra?.trim();
+
+          if (!title) {
+            errors++;
+            details.push({
+              title: "Sem título",
+              status: "error",
+              error: "Objeto da compra não informado.",
+            });
+            continue;
+          }
+
+          const openingDate = toDateOnly(item.dataAberturaProposta);
+          const closingDate = toDateOnly(item.dataEncerramentoProposta);
+
+          if (isClosed(closingDate)) {
+            ignoredClosed++;
+            details.push({
+              title,
+              status: "closed_ignored",
+            });
+            continue;
+          }
+
+          const sourceUrl = getOfficialUrl(item);
+
+          const { data: duplicateByUrl } = await supabase
+            .from("grants")
+            .select("id, code")
+            .eq("source_url", sourceUrl)
+            .maybeSingle();
+
+          if (duplicateByUrl) {
+            duplicates++;
+            details.push({
+              title,
+              status: "duplicate",
+              code: duplicateByUrl.code,
+            });
+            continue;
+          }
+
+          const { data: duplicateByTitle } = await supabase
+            .from("grants")
+            .select("id, code")
+            .ilike("title", title)
+            .limit(1)
+            .maybeSingle();
+
+          if (duplicateByTitle) {
+            duplicates++;
+            details.push({
+              title,
+              status: "duplicate",
+              code: duplicateByTitle.code,
+            });
+            continue;
+          }
+
+          const { count } = await supabase
+            .from("grants")
+            .select("*", { count: "exact", head: true });
+
+          const code = `EDITAL-${String((count || 0) + 1).padStart(4, "0")}`;
+
+          const { error: insertError } = await supabase.from("grants").insert([
+            {
+              code,
+              title,
+              state_scope: item.unidadeOrgao?.ufNome || null,
+              area: "Contratações públicas",
+              opening_date: openingDate,
+              closing_date: closingDate,
+              total_value:
+                item.valorTotalEstimado || item.valorTotalHomologado || null,
+              value_per_project: null,
+              source: "PNCP",
+              source_url: sourceUrl,
+              sender_name: "Terra7 IA",
+              notes: buildNotes(item),
+              raw_text: JSON.stringify(item, null, 2),
+            },
+          ]);
+
+          if (insertError) {
+            errors++;
+            details.push({
+              title,
+              status: "error",
+              error: insertError.message,
+            });
+            continue;
+          }
+
+          imported++;
           details.push({
             title,
-            status: "error",
-            error: insertError.message,
+            status: "imported",
+            code,
           });
-          continue;
+        } catch (error) {
+          console.error("ERRO_IMPORTAR_PNCP_ITEM:", error);
+          errors++;
         }
-
-        imported++;
-        details.push({
-          title,
-          status: "imported",
-          code,
-        });
-      } catch (error) {
-        console.error("ERRO_IMPORTAR_PNCP_ITEM:", error);
-        errors++;
       }
     }
 
     return NextResponse.json({
       success: true,
       source: "PNCP",
-      processed: items.length,
+      processed,
       imported,
       duplicates,
       ignoredClosed,
