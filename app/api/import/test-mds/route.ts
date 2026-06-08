@@ -35,6 +35,13 @@ export async function GET() {
       .replace(/\s+/g, " ")
       .slice(0, 5000);
 
+      const editalPages = hrefs.filter(
+  (link) =>
+    link.includes("editais-de-chamamento-publico") ||
+    link.includes("editais-em-selecao") ||
+    link.includes("edital-sociedade-civil")
+);
+
     const editalMatches = html.match(
       /(edital|editais|chamada|chamamento|oportunidade|inscri[cç][aã]o)/gi
     );
@@ -53,6 +60,7 @@ export async function GET() {
       linksFound: hrefs.length,
       editalWordsFound: editalMatches?.length || 0,
       editalLinks: editalLinks.slice(0, 100),
+      editalPages,
       sampleLinks: hrefs.slice(0, 50),
       titles,
       sampleText: firstText,
