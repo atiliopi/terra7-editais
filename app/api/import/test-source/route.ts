@@ -24,6 +24,14 @@ export async function GET(request: NextRequest) {
   html.matchAll(/href=["']([^"']+)["']/gi)
 ).map((match) => match[1]);
 
+const scripts = Array.from(
+  html.matchAll(/<script[^>]+src=["']([^"']+)["']/gi)
+).map((match) => match[1]);
+
+const possibleApis = Array.from(
+  html.matchAll(/https?:\/\/[^"' ]+|\/api\/[^"' ]+|\/[a-zA-Z0-9/_-]*feed[a-zA-Z0-9/_-]*/gi)
+).map((match) => match[0]);
+
 const editalMatches = html.match(
   /(edital|editais|chamada|chamadas|oportunidade|oportunidades|inscri[cç][aã]o)/gi
 );
@@ -38,6 +46,10 @@ return NextResponse.json({
   htmlSize: html.length,
   linksFound: hrefs.length,
   sampleLinks: hrefs.slice(0, 50),
+
+  scriptSources: scripts,
+  possibleApis: possibleApis.slice(0, 50),
+
   editalWordsFound: editalMatches?.length || 0,
   sampleText: firstText,
 });
