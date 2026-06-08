@@ -20,7 +20,7 @@ const sources: ImportSource[] = [
     name: "Prosas",
     category: "Fomento e projetos",
     description: "Editais de cultura, impacto social, terceiro setor e projetos.",
-    status: "soon",
+    status: "active",
     color: "purple",
   },
   {
@@ -137,19 +137,30 @@ export default function AdminImportsPage() {
     : sources;
 
   async function handleImport(source: ImportSource) {
-    if (source.status !== "active") {
-      alert("Essa fonte ainda está em preparação.");
+  if (source.status !== "active") {
+    alert("Essa fonte ainda está em preparação.");
+    return;
+  }
+
+  setRunningSource(source.id);
+
+  try {
+    const response = await fetch(`/api/import/${source.id}`, {
+      method: "POST",
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      alert(result.error || "Erro ao importar editais.");
       return;
     }
 
-    setRunningSource(source.id);
-
-    try {
-      alert(`Importação da fonte ${source.name} será conectada na próxima etapa.`);
-    } finally {
-      setRunningSource(null);
-    }
+    alert(result.message || "Importação concluída.");
+  } finally {
+    setRunningSource(null);
   }
+}
 
   if (loading) {
     return (
