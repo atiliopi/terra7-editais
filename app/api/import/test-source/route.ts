@@ -21,17 +21,26 @@ export async function GET(request: NextRequest) {
     const html = await response.text();
 
     const hrefs = Array.from(
-      html.matchAll(/href=["']([^"']+)["']/gi)
-    )
-      .map((match) => match[1])
-      .slice(0, 20);
+  html.matchAll(/href=["']([^"']+)["']/gi)
+).map((match) => match[1]);
 
-    return NextResponse.json({
-      status: response.status,
-      htmlSize: html.length,
-      linksFound: hrefs.length,
-      sampleLinks: hrefs,
-    });
+const editalMatches = html.match(
+  /(edital|editais|chamada|chamadas|oportunidade|oportunidades|inscri[cç][aã]o)/gi
+);
+
+const firstText = html
+  .replace(/<[^>]+>/g, " ")
+  .replace(/\s+/g, " ")
+  .slice(0, 5000);
+
+return NextResponse.json({
+  status: response.status,
+  htmlSize: html.length,
+  linksFound: hrefs.length,
+  sampleLinks: hrefs.slice(0, 50),
+  editalWordsFound: editalMatches?.length || 0,
+  sampleText: firstText,
+});
   } catch (error) {
     return NextResponse.json(
       {
