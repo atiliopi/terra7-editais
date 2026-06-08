@@ -136,11 +136,19 @@ export async function POST() {
 
      const raw = await response.text();
 
-console.log("PNCP_RESPONSE_START");
-console.log(raw.slice(0, 2000));
-console.log("PNCP_RESPONSE_END");
+if (!raw.trim()) {
+  break;
+}
 
-const result = JSON.parse(raw);
+let result;
+
+try {
+  result = JSON.parse(raw);
+} catch (error) {
+  console.error("ERRO_JSON_PNCP:", raw.slice(0, 1000));
+  break;
+}
+
 const items: PncpItem[] = result?.data || [];
 
       if (!items.length) break;
