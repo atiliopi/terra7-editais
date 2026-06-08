@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 export async function GET() {
   try {
     const response = await fetch(
-"https://pncp.gov.br/api/consulta/v1/modalidades",
+"https://pncp.gov.br/api/pncp/v1/modalidades",
       {
         headers: {
           Accept: "application/json",
@@ -19,12 +19,13 @@ export async function GET() {
       success: response.ok,
       preview: text.slice(0, 3000),
     });
-  } catch (error) {
-    return NextResponse.json(
-      {
-        error: String(error),
-      },
-      { status: 500 }
-    );
-  }
+  } catch (error: any) {
+  return NextResponse.json(
+    {
+      error: error?.message,
+      stack: error?.stack,
+    },
+    { status: 500 }
+  );
+}
 }
