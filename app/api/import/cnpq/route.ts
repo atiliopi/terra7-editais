@@ -74,7 +74,7 @@ function extractCnpqLinks(html: string) {
 
   return Array.from(links.entries())
     .map(([url, title]) => ({ url, title }))
-    .slice(0, 5);
+    .slice(0, 30);
 }
 
 async function extractWithAI(rawText: string, fallbackTitle: string): Promise<AiGrant> {
@@ -184,6 +184,7 @@ export async function POST() {
     const details = [];
 
     for (const item of links) {
+        if (imported >= 5) break;
       try {
         const { data: duplicateByUrl } = await supabase
           .from("grants")
