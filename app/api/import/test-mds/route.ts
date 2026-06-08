@@ -38,11 +38,20 @@ export async function GET() {
       /(edital|editais|chamada|chamamento|oportunidade|inscri[cç][aã]o)/gi
     );
 
+    const editalLinks = hrefs.filter(
+  (link) =>
+    link.toLowerCase().includes("edital") ||
+    link.toLowerCase().includes("chamamento") ||
+    link.toLowerCase().includes("selecao") ||
+    link.toLowerCase().includes("seleção")
+);
+
     return NextResponse.json({
       status: response.status,
       htmlSize: html.length,
       linksFound: hrefs.length,
       editalWordsFound: editalMatches?.length || 0,
+      editalLinks: editalLinks.slice(0, 100),
       sampleLinks: hrefs.slice(0, 50),
       titles,
       sampleText: firstText,
