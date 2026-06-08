@@ -31,6 +31,9 @@ export default function Home() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [favoriteGrantIds, setFavoriteGrantIds] = useState<string[]>([]);
+  const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
 
   useEffect(() => {
     async function loadGrants() {
@@ -49,6 +52,31 @@ export default function Home() {
 
     loadGrants();
   }, []);
+
+  useEffect(() => {
+  async function loadFavorites() {
+    const { data: sessionData } = await supabase.auth.getSession();
+    const currentUserId = sessionData.session?.user.id;
+
+    if (!currentUserId) return;
+
+    setUserId(currentUserId);
+
+    const { data, error } = await supabase
+      .from("grant_favorites")
+      .select("grant_id")
+      .eq("user_id", currentUserId);
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    setFavoriteGrantIds((data || []).map((item) => item.grant_id));
+  }
+
+  loadFavorites();
+}, []);
 
   useEffect(() => {
     async function checkUser() {
@@ -141,6 +169,48 @@ export default function Home() {
   const closed = filteredGrants.filter((g) => g.status === "closed").length;
   const noDeadline = filteredGrants.filter((g) => g.status === "no_deadline").length;
 
+  async function toggleFavorite(grantId: string) {
+  if (!userId) {
+    alert("Faça login para favoritar editais.");
+    return;
+  }
+
+  const isFavorite = favoriteGrantIds.includes(grantId);
+
+  if (isFavorite) {
+    const { error } = await supabase
+      .from("grant_favorites")
+      .delete()
+      .eq("user_id", userId)
+      .eq("grant_id", grantId);
+
+    if (error) {
+      alert("Erro ao remover favorito.");
+      return;
+    }
+
+    setFavoriteGrantIds((current) =>
+      current.filter((id) => id !== grantId)
+    );
+
+    return;
+  }
+
+  const { error } = await supabase.from("grant_favorites").insert([
+    {
+      user_id: userId,
+      grant_id: grantId,
+    },
+  ]);
+
+  if (error) {
+    alert("Erro ao adicionar favorito.");
+    return;
+  }
+
+  setFavoriteGrantIds((current) => [...current, grantId]);
+}
+  
   function resetPage() {
     setPage(1);
   }
@@ -362,8 +432,25 @@ export default function Home() {
                   className="border-t border-zinc-800 hover:bg-zinc-900/70"
                 >
                   <td className="px-4 py-4 text-zinc-500">
-                    {grant.code ? grant.code.replace("EDITAL-", "") : grant.id.slice(0, 8)}
-                  </td>
+  <div className="flex items-center gap-2">
+    <button
+      type="button"
+      onClick={() => toggleFavorite(grant.id)}
+      className="text-lg text-yellow-400 hover:scale-110"
+      title={
+        favoriteGrantIds.includes(grant.id)
+          ? "Remover dos favoritos"
+          : "Adicionar aos favoritos"
+      }
+    >
+      {favoriteGrantIds.includes(grant.id) ? "★" : "☆"}
+    </button>
+
+    <span>
+      {grant.code ? grant.code.replace("EDITAL-", "") : grant.id.slice(0, 8)}
+    </span>
+  </div>
+</td>
 
                   <td className="max-w-[240px] px-4 py-4 font-medium text-white">
                     <span title={grant.title || ""} className="line-clamp-2">
@@ -416,18 +503,33 @@ export default function Home() {
               className="rounded-2xl border border-zinc-800 bg-zinc-950 p-4 shadow-lg shadow-black/30"
             >
               <div className="mb-3 flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                    {grant.code || `ID ${grant.id.slice(0, 8)}`}
-                  </p>
+  <div className="flex items-start gap-2">
+    <button
+      type="button"
+      onClick={() => toggleFavorite(grant.id)}
+      className="mt-1 text-xl text-yellow-400"
+      title={
+        favoriteGrantIds.includes(grant.id)
+          ? "Remover dos favoritos"
+          : "Adicionar aos favoritos"
+      }
+    >
+      {favoriteGrantIds.includes(grant.id) ? "★" : "☆"}
+    </button>
 
-                  <h2 className="mt-1 text-base font-semibold leading-6 text-white">
-                    {grant.title || "Sem título"}
-                  </h2>
-                </div>
+    <div>
+      <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+        {grant.code || `ID ${grant.id.slice(0, 8)}`}
+      </p>
 
-                <GrantStatusBadge status={grant.status} />
-              </div>
+      <h2 className="mt-1 text-base font-semibold leading-6 text-white">
+        {grant.title || "Sem título"}
+      </h2>
+    </div>
+  </div>
+
+  <GrantStatusBadge status={grant.status} />
+</div>
 
               <div className="grid gap-2 text-sm text-zinc-300">
                 <MobileInfo label="Estado" value={grant.state_scope || "Não informado"} />
