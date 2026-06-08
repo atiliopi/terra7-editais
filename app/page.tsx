@@ -446,7 +446,7 @@ export default function Home() {
             </thead>
 
             <tbody>
-              {paginatedGrants.map((grant) => (
+              {paginatedGrants.map((grant, index) => (
                 <tr
                   key={grant.id}
                   className="border-t border-zinc-800 hover:bg-zinc-900/70"
@@ -467,8 +467,8 @@ export default function Home() {
     </button>
 
     <span>
-      {grant.code ? grant.code.replace("EDITAL-", "") : grant.id.slice(0, 8)}
-    </span>
+  {String((page - 1) * limit + index + 1).padStart(4, "0")}
+</span>
   </div>
 </td>
 
@@ -517,7 +517,7 @@ export default function Home() {
         </section>
 
         <section className="grid gap-4 md:hidden">
-          {paginatedGrants.map((grant) => (
+          {paginatedGrants.map((grant, index) => (
             <article
               key={grant.id}
               className="rounded-2xl border border-zinc-800 bg-zinc-950 p-4 shadow-lg shadow-black/30"
@@ -539,7 +539,7 @@ export default function Home() {
 
     <div>
       <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
-        {grant.code || `ID ${grant.id.slice(0, 8)}`}
+        {String((page - 1) * limit + index + 1).padStart(4, "0")}
       </p>
 
       <h2 className="mt-1 text-base font-semibold leading-6 text-white">
