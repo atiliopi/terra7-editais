@@ -52,7 +52,7 @@ const sources: ImportSource[] = [
     name: "PNCP",
     category: "Licitações e contratações",
     description: "Contratações públicas nacionais e oportunidades oficiais.",
-    status: "soon",
+    status: "active",
     color: "yellow",
   },
   {
