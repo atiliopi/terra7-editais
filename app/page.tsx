@@ -467,7 +467,7 @@ export default function Home() {
     </button>
 
     <span>
-  {String((page - 1) * limit + index + 1).padStart(4, "0")}
+  {String(filteredGrants.length - ((page - 1) * limit + index)).padStart(4, "0")}
 </span>
   </div>
 </td>
@@ -539,7 +539,9 @@ export default function Home() {
 
     <div>
       <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
-        {String((page - 1) * limit + index + 1).padStart(4, "0")}
+        {String(
+  filteredGrants.length - ((page - 1) * limit + index)
+).padStart(4, "0")}
       </p>
 
       <h2 className="mt-1 text-base font-semibold leading-6 text-white">
