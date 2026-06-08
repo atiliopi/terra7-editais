@@ -32,6 +32,14 @@ const sources: ImportSource[] = [
     color: "blue",
   },
   {
+  id: "fapema",
+  name: "FAPEMA",
+  category: "Maranhão",
+  description: "Editais de pesquisa, inovação e fomento no Maranhão.",
+  status: "active",
+  color: "green",
+},
+  {
     id: "finep",
     name: "Finep",
     category: "Fomento e projetos",
