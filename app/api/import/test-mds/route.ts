@@ -3,8 +3,8 @@ import { NextResponse } from "next/server";
 export async function GET() {
   try {
    
-      const url =
-  "https://www.gov.br/mds/pt-br/acesso-a-informacao/participacao-social/editais-de-chamamento-publico/editais-de-chamamento-publico/";
+     const url =
+  "https://www.gov.br/cnpq/pt-br/chamadas/abertas-para-submissao";
 
     const response = await fetch(url, {
       headers: {
