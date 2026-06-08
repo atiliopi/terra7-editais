@@ -19,6 +19,12 @@ export default function RegisterPage() {
 
     setLoading(true);
 
+    const cleanPhone = phone.replace(/\D/g, "");
+
+const normalizedPhone = cleanPhone.startsWith("55")
+  ? cleanPhone
+  : `55${cleanPhone}`;
+
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -35,7 +41,7 @@ export default function RegisterPage() {
       id: data.user.id,
       full_name: fullName,
       email,
-      phone,
+      phone: normalizedPhone,
       role: "viewer",
       status: "pending",
     });
@@ -96,13 +102,13 @@ export default function RegisterPage() {
             </label>
 
             <label className="block">
-              <span className="mb-2 block text-xs text-zinc-400">Telefone</span>
+              <span className="mb-2 block text-xs text-zinc-400">WhatsApp</span>
 
               <input
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 required
-                placeholder="(00) 00000-0000"
+                placeholder="(11) 99999-9999"
                 className="w-full rounded-xl border border-zinc-800 bg-black px-3 py-2 text-white outline-none focus:border-blue-500"
               />
             </label>
