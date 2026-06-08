@@ -360,7 +360,9 @@ export default function Home() {
       : "border-zinc-800 bg-black text-zinc-300"
   }`}
 >
-  {showOnlyFavorites ? "★ Meus favoritos" : "☆ Meus favoritos"}
+  {showOnlyFavorites
+  ? `★ Meus favoritos (${favoriteGrantIds.length})`
+  : `☆ Meus favoritos (${favoriteGrantIds.length})`}
 </button>
 
             <select
