@@ -46,13 +46,20 @@ export async function GET() {
       /(edital|editais|chamada|chamamento|oportunidade|inscri[cç][aã]o)/gi
     );
 
-    const editalLinks = hrefs.filter(
-  (link) =>
-    link.toLowerCase().includes("edital") ||
-    link.toLowerCase().includes("chamamento") ||
-    link.toLowerCase().includes("selecao") ||
-    link.toLowerCase().includes("seleção")
-);
+const editalLinks = hrefs.filter((link) => {
+  const lowerLink = link.toLowerCase();
+
+  return (
+    lowerLink.includes("edital") ||
+    lowerLink.includes("chamada") ||
+    lowerLink.includes("chamadas") ||
+    lowerLink.includes("busca_abertas") ||
+    lowerLink.includes("abertas-para-submissao") ||
+    lowerLink.includes("chamamento") ||
+    lowerLink.includes("selecao") ||
+    lowerLink.includes("seleção")
+  );
+});
 
     return NextResponse.json({
       status: response.status,
