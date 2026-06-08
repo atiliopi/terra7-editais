@@ -36,7 +36,7 @@ const sources: ImportSource[] = [
     name: "Finep",
     category: "Fomento e projetos",
     description: "Chamadas de inovação, pesquisa e desenvolvimento.",
-    status: "soon",
+    status: "active",
     color: "cyan",
   },
   {
