@@ -261,6 +261,15 @@ export default function Home() {
               </Link>
 
               {isAdmin && (
+              <Link
+               href="/admin/imports"
+                className="rounded-xl border border-yellow-600 px-4 py-3 text-center text-sm font-semibold text-yellow-400 hover:bg-yellow-900/20"
+                >
+               Importar editais
+              </Link>
+
+
+              {isAdmin && (
                 <Link
                   href="/admin/users"
                   className="rounded-xl border border-blue-600 px-4 py-3 text-center text-sm font-semibold text-blue-400 hover:bg-blue-900/20"
