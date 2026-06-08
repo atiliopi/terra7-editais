@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 export async function GET() {
   try {
     const response = await fetch(
-"https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=2026-01-01&dataFinal=2026-12-31&pagina=1&tamanhoPagina=5",
+"https://pncp.gov.br/api/consulta/v1/modalidades",
       {
         headers: {
           Accept: "application/json",
