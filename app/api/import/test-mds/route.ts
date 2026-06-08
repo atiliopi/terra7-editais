@@ -4,7 +4,7 @@ export async function GET() {
   try {
    
      const url =
-  "https://www.gov.br/cnpq/pt-br/chamadas/abertas-para-submissao";
+  "https://www.fapema.br/category/editais/editais-em-aberto/";
 
     const response = await fetch(url, {
       headers: {
