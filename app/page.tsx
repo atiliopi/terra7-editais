@@ -267,7 +267,7 @@ export default function Home() {
                 >
                Importar editais
               </Link>
-
+              )}
 
               {isAdmin && (
                 <Link
