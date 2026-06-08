@@ -135,27 +135,32 @@ export default function Home() {
         !openingFrom || (grant.opening_date && grant.opening_date >= openingFrom);
       const matchesOpeningTo =
         !openingTo || (grant.opening_date && grant.opening_date <= openingTo);
+      const matchesFavorites =
+        !showOnlyFavorites || favoriteGrantIds.includes(grant.id);
 
       return (
-        matchesSearch &&
-        matchesState &&
-        matchesStatus &&
-        matchesArea &&
-        matchesSender &&
-        matchesOpeningFrom &&
-        matchesOpeningTo
-      );
+  matchesSearch &&
+  matchesState &&
+  matchesStatus &&
+  matchesArea &&
+  matchesSender &&
+  matchesOpeningFrom &&
+  matchesOpeningTo &&
+  matchesFavorites
+);
     });
   }, [
-    search,
-    stateFilter,
-    statusFilter,
-    areaFilter,
-    senderFilter,
-    openingFrom,
-    openingTo,
-    grantsWithStatus,
-  ]);
+  search,
+  stateFilter,
+  statusFilter,
+  areaFilter,
+  senderFilter,
+  openingFrom,
+  openingTo,
+  grantsWithStatus,
+  showOnlyFavorites,
+  favoriteGrantIds,
+]);
 
   const totalPages = Math.max(1, Math.ceil(filteredGrants.length / limit));
   const paginatedGrants = filteredGrants.slice((page - 1) * limit, page * limit);
@@ -342,6 +347,21 @@ export default function Home() {
               <option value="closed">Encerrado</option>
               <option value="no_deadline">Sem prazo</option>
             </select>
+
+            <button
+  type="button"
+  onClick={() => {
+    setShowOnlyFavorites((current) => !current);
+    resetPage();
+  }}
+  className={`rounded-xl border px-4 py-3 text-sm font-medium transition ${
+    showOnlyFavorites
+      ? "border-yellow-500 bg-yellow-500/10 text-yellow-400"
+      : "border-zinc-800 bg-black text-zinc-300"
+  }`}
+>
+  {showOnlyFavorites ? "★ Meus favoritos" : "☆ Meus favoritos"}
+</button>
 
             <select
               value={senderFilter}
