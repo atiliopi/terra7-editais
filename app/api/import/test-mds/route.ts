@@ -4,7 +4,7 @@ export async function GET() {
   try {
    
       const url =
-  "https://www.gov.br/mds/pt-br/acesso-a-informacao/participacao-social/editais-de-chamamento-publico";
+  "https://www.gov.br/mds/pt-br/acesso-a-informacao/participacao-social/editais-de-chamamento-publico/editais-de-chamamento-publico/";
 
     const response = await fetch(url, {
       headers: {
