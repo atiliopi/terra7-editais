@@ -25,10 +25,11 @@ export default function RegisterPage() {
     });
 
     if (error || !data.user) {
-      setLoading(false);
-      alert("Erro ao criar conta.");
-      return;
-    }
+  setLoading(false);
+  console.error("ERRO_CRIAR_CONTA:", error);
+  alert(error?.message || "Erro ao criar conta.");
+  return;
+}
 
     const { error: profileError } = await supabase.from("profiles").insert({
       id: data.user.id,
