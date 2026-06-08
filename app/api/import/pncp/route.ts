@@ -134,8 +134,14 @@ export async function POST() {
         );
       }
 
-      const result = await response.json();
-      const items: PncpItem[] = result?.data || [];
+     const raw = await response.text();
+
+console.log("PNCP_RESPONSE_START");
+console.log(raw.slice(0, 2000));
+console.log("PNCP_RESPONSE_END");
+
+const result = JSON.parse(raw);
+const items: PncpItem[] = result?.data || [];
 
       if (!items.length) break;
 
