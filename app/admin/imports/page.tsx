@@ -28,7 +28,7 @@ const sources: ImportSource[] = [
     name: "CNPq",
     category: "Fomento e projetos",
     description: "Chamadas de pesquisa, ciência, tecnologia e bolsas.",
-    status: "soon",
+    status: "active",
     color: "blue",
   },
   {
