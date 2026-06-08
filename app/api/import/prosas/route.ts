@@ -157,6 +157,10 @@ export async function POST() {
     const listHtml = await listResponse.text();
     const links = extractProsasLinks(listHtml);
 
+    console.log("PROSAS_HTML_SIZE:", listHtml.length);
+    console.log("PROSAS_FIRST_1000:", listHtml.slice(0, 1000));
+    console.log("PROSAS_LINKS_FOUND:", links.length);
+
     let imported = 0;
     let duplicates = 0;
     let ignoredClosed = 0;
