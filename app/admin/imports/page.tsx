@@ -89,18 +89,7 @@ const sources: ImportSource[] = [
   },
 ];
 
-const mockHistory = [
-  {
-    id: "1",
-    source: "Prosas",
-    category: "Fomento e projetos",
-    imported: 0,
-    duplicates: 0,
-    ignored: 0,
-    errors: 0,
-    created_at: "Ainda não executado",
-  },
-];
+const [history, setHistory] = useState<any[]>([]);
 
 export default function AdminImportsPage() {
   const router = useRouter();
@@ -129,6 +118,14 @@ export default function AdminImportsPage() {
         router.push("/");
         return;
       }
+
+      const { data: logs } = await supabase
+  .from("import_logs")
+  .select("*")
+  .order("created_at", { ascending: false })
+  .limit(50);
+
+setHistory(logs || []);
 
       setLoading(false);
     }
@@ -327,23 +324,41 @@ export default function AdminImportsPage() {
               </thead>
 
               <tbody>
-                {mockHistory.map((item) => (
-                  <tr key={item.id} className="border-t border-zinc-800">
-                    <td className="px-5 py-4 text-zinc-400">{item.created_at}</td>
-                    <td className="px-5 py-4 text-white">{item.source}</td>
-                    <td className="px-5 py-4 text-zinc-300">{item.category}</td>
-                    <td className="px-5 py-4 text-green-400">{item.imported}</td>
-                    <td className="px-5 py-4 text-yellow-400">{item.duplicates}</td>
-                    <td className="px-5 py-4 text-zinc-400">{item.ignored}</td>
-                    <td className="px-5 py-4 text-red-400">{item.errors}</td>
-                  </tr>
-                ))}
-              </tbody>
+  {history.map((item) => (
+    <tr key={item.id} className="border-t border-zinc-800">
+      <td className="px-5 py-4 text-zinc-400">
+        {new Date(item.created_at).toLocaleString("pt-BR")}
+      </td>
+
+      <td className="px-5 py-4 text-white">{item.source}</td>
+
+      <td className="px-5 py-4 text-zinc-300">
+        {item.category}
+      </td>
+
+      <td className="px-5 py-4 text-green-400">
+        {item.imported_count}
+      </td>
+
+      <td className="px-5 py-4 text-yellow-400">
+        {item.duplicate_count}
+      </td>
+
+      <td className="px-5 py-4 text-zinc-400">
+        {item.ignored_count}
+      </td>
+
+      <td className="px-5 py-4 text-red-400">
+        {item.error_count}
+      </td>
+    </tr>
+  ))}
+</tbody>
             </table>
           </div>
 
           <div className="grid gap-3 p-4 md:hidden">
-            {mockHistory.map((item) => (
+            {history.map((item) => (
               <article
                 key={item.id}
                 className="rounded-xl border border-zinc-800 bg-black p-4"
@@ -353,11 +368,26 @@ export default function AdminImportsPage() {
                 <p className="text-sm text-zinc-400">{item.category}</p>
 
                 <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
-                  <MobileStat label="Importados" value={item.imported} />
-                  <MobileStat label="Duplicados" value={item.duplicates} />
-                  <MobileStat label="Ignorados" value={item.ignored} />
-                  <MobileStat label="Erros" value={item.errors} />
-                </div>
+  <MobileStat
+    label="Importados"
+    value={item.imported_count}
+  />
+
+  <MobileStat
+    label="Duplicados"
+    value={item.duplicate_count}
+  />
+
+  <MobileStat
+    label="Ignorados"
+    value={item.ignored_count}
+  />
+
+  <MobileStat
+    label="Erros"
+    value={item.error_count}
+  />
+</div>
               </article>
             ))}
           </div>
