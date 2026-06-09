@@ -361,7 +361,7 @@ function getMissingInfoReply(parsed: ParsedGrant) {
 
   if (!parsed.title) missing.push("título do edital");
   if (!parsed.closing_date) missing.push("data de encerramento");
-  if (!parsed.source_url) missing.push("link oficial ou arquivo do edital");
+  
 
   if (!missing.length) return null;
 
@@ -717,16 +717,6 @@ export async function POST(request: Request) {
       urls[0] || null
     );
 
-    const missingReply = getMissingInfoReply(parsed);
-
-    if (missingReply) {
-      return NextResponse.json({
-        ignored: true,
-        reason: "Informações obrigatórias pendentes",
-        parsed,
-        reply: missingReply,
-      });
-    }
 
     if (parsed.source_url) {
       const { data: duplicateByUrl } = await supabase
@@ -770,17 +760,25 @@ export async function POST(request: Request) {
         console.error("ERRO_VERIFICAR_DUPLICIDADE:", duplicateError);
       }
 
-      if (duplicateGrant) {
-        return NextResponse.json({
-          ignored: true,
-          reason: "Edital duplicado",
-          duplicate: duplicateGrant,
-          reply: `Sou o Terra7. Este edital parece já estar cadastrado como ${
-            duplicateGrant.code || duplicateGrant.id
-          }.`,
-        });
-      }
-    }
+    if (duplicateGrant) {
+  await sendWhatsAppReply(
+    senderPhone,
+    `Sou o Terra7. Este edital parece já estar cadastrado como ${
+      duplicateGrant.code || duplicateGrant.id
+    }.`
+  );
+
+  return NextResponse.json({
+    ignored: true,
+    reason: "Edital duplicado",
+    duplicate: duplicateGrant,
+    reply: `Sou o Terra7. Este edital parece já estar cadastrado como ${
+      duplicateGrant.code || duplicateGrant.id
+    }.`,
+  });
+}
+
+}
 
     const { count } = await supabase
       .from("grants")
