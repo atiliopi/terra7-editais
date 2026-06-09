@@ -95,12 +95,10 @@ export async function POST() {
     );
 
     const { start, end } = getDateRange();
-
-    const modalidade = 10;
-    const tamanhoPagina = 10;
-    const maxPages = 5;
-    const maxImports = 5;
-
+const modalidade = 10;
+const tamanhoPagina = 50;
+const maxPages = 20;
+const maxImports = 5;
     let imported = 0;
     let duplicates = 0;
     let ignoredClosed = 0;
