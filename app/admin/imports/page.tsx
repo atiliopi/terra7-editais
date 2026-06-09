@@ -277,9 +277,26 @@ setHistory(logs || []);
               </p>
 
               <div className="mt-5 grid grid-cols-3 gap-2 rounded-xl border border-zinc-800 bg-black p-3 text-center text-xs">
-                <MiniStat label="Importados" value="0" />
-                <MiniStat label="Duplicados" value="0" />
-                <MiniStat label="Ignorados" value="0" />
+                <MiniStat
+  label="Importados"
+  value={String(
+    history.find((item) => item.source === source.name)?.imported_count || 0
+  )}
+/>
+
+<MiniStat
+  label="Duplicados"
+  value={String(
+    history.find((item) => item.source === source.name)?.duplicate_count || 0
+  )}
+/>
+
+<MiniStat
+  label="Ignorados"
+  value={String(
+    history.find((item) => item.source === source.name)?.ignored_count || 0
+  )}
+/>
               </div>
 
               <button
