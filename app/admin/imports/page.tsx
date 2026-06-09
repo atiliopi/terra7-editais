@@ -89,7 +89,6 @@ const sources: ImportSource[] = [
   },
 ];
 
-const [history, setHistory] = useState<any[]>([]);
 
 export default function AdminImportsPage() {
   const router = useRouter();
@@ -97,6 +96,7 @@ export default function AdminImportsPage() {
   const [loading, setLoading] = useState(true);
   const [runningSource, setRunningSource] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [history, setHistory] = useState<any[]>([]);
 
   useEffect(() => {
     async function checkAdmin() {
