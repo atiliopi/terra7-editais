@@ -726,15 +726,22 @@ export async function POST(request: Request) {
         .maybeSingle();
 
       if (duplicateByUrl) {
-        return NextResponse.json({
-          ignored: true,
-          reason: "Edital duplicado por link",
-          duplicate: duplicateByUrl,
-          reply: `Sou o Terra7. Este edital já parece estar cadastrado como ${
-            duplicateByUrl.code || duplicateByUrl.id
-          }.`,
-        });
-      }
+  await sendWhatsAppReply(
+    senderPhone,
+    `Sou o Terra7. Este edital já parece estar cadastrado como ${
+      duplicateByUrl.code || duplicateByUrl.id
+    }.`
+  );
+
+  return NextResponse.json({
+    ignored: true,
+    reason: "Edital duplicado por link",
+    duplicate: duplicateByUrl,
+    reply: `Sou o Terra7. Este edital já parece estar cadastrado como ${
+      duplicateByUrl.code || duplicateByUrl.id
+    }.`,
+  });
+}
     }
 
     const normalizedTitle = parsed.title?.trim();
