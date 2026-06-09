@@ -325,6 +325,18 @@ export async function POST() {
       }
     }
 
+    await supabase.from("import_logs").insert([
+  {
+    source: "CNPq",
+    category: "Pesquisa",
+    imported_count: imported,
+    duplicate_count: duplicates,
+    ignored_count: ignoredClosed,
+    error_count: errors,
+    message: `CNPq: ${imported} importados, ${duplicates} duplicados, ${ignoredClosed} ignorados, ${errors} erros.`,
+  },
+]);
+
     return NextResponse.json({
       success: true,
       source: "CNPq",

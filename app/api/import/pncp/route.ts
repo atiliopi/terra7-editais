@@ -264,6 +264,18 @@ const items: PncpItem[] = result?.data || [];
       }
     }
 
+    await supabase.from("import_logs").insert([
+  {
+    source: "PNCP",
+    category: "Contratações públicas",
+    imported_count: imported,
+    duplicate_count: duplicates,
+    ignored_count: ignoredClosed,
+    error_count: errors,
+    message: `PNCP: ${imported} importados, ${duplicates} duplicados, ${ignoredClosed} ignorados, ${errors} erros.`,
+  },
+]);
+
     return NextResponse.json({
       success: true,
       source: "PNCP",

@@ -298,6 +298,18 @@ export async function POST() {
       }
     }
 
+    await supabase.from("import_logs").insert([
+  {
+    source: "Equatorial",
+    category: "Responsabilidade social",
+    imported_count: imported,
+    duplicate_count: duplicates,
+    ignored_count: ignoredClosed,
+    error_count: errors,
+    message: `Equatorial: ${imported} importados, ${duplicates} duplicados, ${ignoredClosed} ignorados, ${errors} erros.`,
+  },
+]);
+
     return NextResponse.json({
       success: true,
       source: "Equatorial",
