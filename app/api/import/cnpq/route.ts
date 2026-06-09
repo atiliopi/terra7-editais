@@ -73,8 +73,7 @@ function extractCnpqLinks(html: string) {
   }
 
   return Array.from(links.entries())
-    .map(([url, title]) => ({ url, title }))
-    .slice(0, 30);
+    .map(([url, title]) => ({ url, title }));
 }
 
 async function extractWithAI(rawText: string, fallbackTitle: string): Promise<AiGrant> {
