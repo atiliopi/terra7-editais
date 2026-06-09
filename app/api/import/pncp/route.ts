@@ -96,7 +96,7 @@ export async function POST() {
 
     const { start, end } = getDateRange();
 const modalidade = 10;
-const tamanhoPagina = 50;
+const tamanhoPagina = 10;
 const maxPages = 20;
 const maxImports = 5;
     let imported = 0;
