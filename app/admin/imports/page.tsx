@@ -68,7 +68,7 @@ const sources: ImportSource[] = [
     name: "Equatorial",
     category: "Energia e sustentabilidade",
     description: "Chamadas de eficiência energética, P&D e projetos sociais.",
-    status: "soon",
+    status: "active",
     color: "orange",
   },
   {
