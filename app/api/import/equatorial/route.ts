@@ -56,7 +56,7 @@ function extractEquatorialLinks(html: string) {
     if (!href.includes("equatorialenergia.com.br/")) continue;
     if (href.includes("/category/")) continue;
     if (href.includes("/feed/")) continue;
-    if (title.length < 10) continue;
+    if (title.length < 3 && !href.toLowerCase().includes("edital")) continue;
 
     const lower = `${href} ${title}`.toLowerCase();
 
