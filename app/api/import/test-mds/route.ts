@@ -4,7 +4,7 @@ export async function GET() {
   try {
    
      const url =
-  "https://www.fapema.br/category/editais/editais-em-aberto/";
+  "https://www.equatorialenergia.com.br/category/responsabilidade-social/";
 
     const response = await fetch(url, {
       headers: {
